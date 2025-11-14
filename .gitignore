@@ -53,5 +53,5 @@ benchmarks/
 chunks_metadata/
 onlyTextLessonsTurbo/
 timestamp_json_turbo/
-transcriprion/
+transcription/
 docker-compose.yml
