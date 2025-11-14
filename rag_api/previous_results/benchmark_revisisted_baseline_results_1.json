@@ -1,0 +1,11 @@
+{
+  "exact_match": 0.25,
+  "recall@1": 0.25,
+  "recall@3": 0.40625,
+  "recall@5": 0.46875,
+  "precision@1": 0.25,
+  "precision@3": 0.1354166666666667,
+  "precision@5": 0.09375,
+  "mrr": 0.33472222222222214,
+  "total_queries": 96
+}

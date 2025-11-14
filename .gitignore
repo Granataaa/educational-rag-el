@@ -1,0 +1,57 @@
+# File di sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# File temporanei o di backup
+*.log
+*.tmp
+*.swp
+*.bak
+*.old
+
+# Cartelle di ambiente o build
+node_modules/
+venv/
+env/
+build/
+dist/
+__pycache__/
+*.egg-info/
+
+# File di configurazione personali o segreti
+.env
+*.env
+*.secret
+*.key
+*.pem
+
+# File di editor o IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Output o cache
+*.pyc
+*.pyo
+.cache/
+.ipynb_checkpoints/
+
+# file generali
+request_log.json
+reactApi/react-client/public/video
+BLINK
+rag_api/out.txt
+rag_api/out2.txt
+rag_api/out3.txt
+rag_api/out4.txt
+rag_api/out5.txt
+
+
+benchmarks/
+chunks_metadata/
+onlyTextLessonsTurbo/
+timestamp_json_turbo/
+transcriprion/
+docker-compose.yml

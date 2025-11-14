@@ -1,0 +1,8 @@
+{
+  "exact_match": 0.5384615384615384,
+  "recall": 0.5746268656716419,
+  "precision": 0.3753731343283581,
+  "mrr": 0.49726368159203976,
+  "total_queries": 91,
+  "total_defined_queries": 67
+}

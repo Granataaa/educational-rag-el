@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: UniNettuno RAG
+  version: 1.0.0
+paths:
+  /ask:
+    get:
+      operationId: controllers.ask_controller.ask_get
+      summary: Chiedi una query
+      description: Recupera i dati dal sistema RAG per la query fornita
+      parameters:
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+            description: La query da inviare al sistema RAG
+        - in: query
+          name: k_ric
+          required: true
+          schema:
+            type: integer
+            description: Quante risposte ottenere dal RAG
+        - in: query
+          name: LLMHelp
+          required: true
+          schema:
+            type: boolean
+            description: Aiuto da parte di un LLM per sistemare i risultati
+      responses:
+        '200':
+          description: Risultato della query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    chunk_id:
+                      type: integer
+                    text:
+                      type: string
+                    source:
+                      type: string
+                    start_time:
+                      type: number
+                      format: float
+                    end_time:
+                      type: number
+                      format: float
+                    entities:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                          label:
+                            type: string

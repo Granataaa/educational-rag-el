@@ -1,0 +1,8 @@
+.git
+.gitignore
+node_modules # Se non vuoi che vengano copiate prima dell'npm install nel container
+build        # Se la tua app React crea una cartella build locale
+__pycache__
+*.pyc
+.env         # Se hai file di configurazione locali
+.ipynb_checkpoints
