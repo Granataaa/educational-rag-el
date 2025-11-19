@@ -36,7 +36,7 @@ for folder in folders:
     # Crea il percorso completo per la sottocartella dei video
     path = os.path.join(instance_folder, folder)
     # Trova tutti i file .mp4 all'interno della sottocartella
-    instance_files = [os.path.join(path, f) for f in os.listdir(path) if f.endswith(".mp4")]
+    instance_files = [os.path.join(path, f) for f in os.listdir(path) if f.endswith(".mp3")]
     print(f"File video da trascrivere nella cartella '{folder}': {instance_files}")
 
     # Ciclo per trascrivere ogni singolo video
