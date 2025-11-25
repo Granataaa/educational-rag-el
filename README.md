@@ -1,4 +1,4 @@
-# Istruzioni per l'Utilizzo del Progetto
+<!-- # Istruzioni per l'Utilizzo del Progetto
 
 Questo documento offre due set di istruzioni per l'avvio e l'utilizzo del progetto:
 
@@ -149,4 +149,196 @@ La documentazione dell'API è disponibile all'indirizzo:
 
 ## Note Finali
 
-Se incontri problemi di connessione (come `ERR_CONNECTION_REFUSED` o `ERR_EMPTY_RESPONSE`), verifica che le mappature delle porte in `docker run` e la configurazione dell'host siano corrette. Inoltre, controlla che il tuo firewall non stia bloccando il traffico.
+Se incontri problemi di connessione (come `ERR_CONNECTION_REFUSED` o `ERR_EMPTY_RESPONSE`), verifica che le mappature delle porte in `docker run` e la configurazione dell'host siano corrette. Inoltre, controlla che il tuo firewall non stia bloccando il traffico. -->
+
+
+
+# Educational RAG with Entity Linking (EL)
+
+This project implements an educational Question Answering system using **Retrieval-Augmented Generation (RAG)** enhanced with **Entity Linking (EL)**. It consists of a Python-based backend API (Flask/Connexion) and a React-based frontend.
+
+The system is designed to ingest educational video content, transcribe it, index the information, and answer user queries by retrieving relevant context and linking entities to knowledge bases.
+
+---
+
+## 📂 Project Structure
+
+* **`rag_api/`**: The backend logic.
+    * **`server.py`**: Entry point for the Flask server.
+    * **`rag_service.py`**: Core RAG logic.
+    * **`rag_el.py`** & **`rag_ner_spacy.py`**: Modules handling Entity Linking and Named Entity Recognition.
+    * **`controllers/`**: API endpoint controllers (e.g., `ask_controller.py`).
+    * **`swagger/`**: OpenAPI specification (`openapi.yaml`).
+* **`reactApi/react-client/`**: The frontend application built with React.
+* **`bench_scripts/`**: Scripts for creating, validating, and fixing benchmarks to evaluate the system's performance.
+* **`chunks_scripts/`**: Experimental scripts for text chunking, embedding generation, and NER using different models (Spacy, Flair, Roberta, Stanza).
+* **`squad/`**: Utilities for building indices and testing the system against the SQuAD (Stanford Question Answering Dataset) format, specifically for Italian (`squad_it`).
+* **Root Scripts**:
+    * **`whisperXuniNet.py/.ipynb`**: Speech-to-Text transcription using Whisper.
+    * **`extractionText.py`**: Post-processing of transcribed text.
+    * **`denseR.py/.ipynb`**: Generation of dense embeddings for retrieval (using FAISS).
+
+---
+
+## 🚀 Getting Started
+
+You can run this project in two ways:
+1.  **Conda (Recommended for Local Development):** Best for debugging and flexibility.
+2.  **Docker (Recommended for Production/Portability):** Ensures a standardized, isolated environment. **Note:** The Docker image size is approx. 73GB due to ML models.
+
+### Prerequisites
+
+#### For Conda
+* **Conda** installed.
+* **React** and **npm** installed.
+* **CUDA Toolkit** (if using GPU acceleration).
+
+#### For Docker
+* **Docker Desktop** installed (with WSL 2 enabled on Windows).
+* **NVIDIA Drivers** and **NVIDIA Container Toolkit** configured for GPU acceleration.
+
+---
+
+## ⚙️ Configuration
+
+### 1. Environment Variables
+Create a `.env` file in the project root (or inside `rag_api/` depending on your setup preferences) with the following OpenAI API credentials:
+
+```ini
+OPENAI_API_KEY=your_api_key_here
+ORGANIZATION=your_organization_here
+PROJECT=your_project_here
+URL=your_api_url_here
+````
+
+### 2\. JSON Configuration
+
+Update the configuration files to match your environment.
+
+  * **`config.json`** (Root directory):
+
+      * **For Conda:** Set `host` to `"localhost"`.
+      * **For Docker:** Set `host` to `"0.0.0.0"`.
+      * **`directoryVideo.path`**: Set the absolute path to your video course directory.
+
+  * **`reactApi/react-client/public/config.json`**:
+
+      * Set `api_base_url` to `"http://localhost:5005"`.
+
+### 3\. Video Files Setup
+
+Place your educational video files in the following two locations:
+
+1.  `reactApi/react-client/public/video/CourseName` (for the frontend player).
+2.  The directory specified in the `path` of your root `config.json` (for backend processing).
+
+-----
+
+## 🧠 Data Processing Pipeline
+
+If starting from scratch with new videos, execute the following scripts in order to generate the necessary data (Text and Embeddings):
+
+1.  **Speech-to-Text**: Run `whisperXuniNet.py` to transcribe video audio.
+2.  **Text Post-Processing**: Run `extractionText.py` to clean and format the transcripts.
+3.  **Embeddings Generation**: Run `denseR.py` to create vector embeddings for the content.
+
+*Advanced users can check `chunks_scripts/` for alternative embedding/NER strategies (e.g., `roberta_chunks...`, `flair_chunks...`).*
+
+-----
+
+## 🏃‍♂️ Running the Project
+
+### Option A: Using Conda
+
+1.  **Create the Environment**:
+
+    ```bash
+    # Windows
+    conda env create -f environment.yml
+
+    # Other systems
+    conda env create -f environment_crossplatform.yml
+    ```
+
+    *Tip: Check `environment.yml` to ensure the `cudatoolkit` version matches your GPU (`nvcc --version`).*
+
+2.  **Start the API Server**:
+
+    ```bash
+    cd rag_api
+    python server.py
+    ```
+
+3.  **Start the React Client**:
+    Open a new terminal:
+
+    ```bash
+    cd reactApi/react-client
+    npm start
+    ```
+
+    The app will be available at `http://localhost:3000`.
+
+### Option B: Using Docker
+
+1.  **Build the Image**:
+
+    ```bash
+    docker build -t educational-rag .
+    ```
+
+2.  **Run the Container**:
+
+    ```bash
+    docker run -it --rm \
+    -p 5005:5005 \
+    -p 3000:3000 \
+    --gpus all \
+    --env-file ./rag_api/.env \
+    educational-rag
+    ```
+
+3.  **Start Services Inside Container**:
+    You need to open separate terminal sessions connected to the running container (`docker exec`).
+
+      * **Terminal 1 (API)**:
+        ```bash
+        docker exec -it <CONTAINER_ID> bash
+        cd rag_api
+        python server.py
+        ```
+      * **Terminal 2 (Frontend)**:
+        ```bash
+        docker exec -it <CONTAINER_ID> bash
+        cd reactApi/react-client
+        npm start
+        ```
+
+The application is now accessible at `http://localhost:3000`.
+
+-----
+
+## 📖 API Documentation
+
+Once the server is running, the interactive Swagger API documentation is available at:
+`http://localhost:5005/ui`
+
+-----
+
+## 🧪 Benchmarking & Evaluation
+
+The repository includes tools to evaluate the RAG and Entity Linking performance.
+
+  * **Benchmarking**: Use scripts in `bench_scripts/` (e.g., `createBenchmark.py`, `validateBenchmark.py`) to generate test sets.
+  * **Results**: View evaluation outcomes in `rag_api/final_results/` and `rag_api/previous_results/`.
+  * **SQuAD**: Use `squad/` scripts to build indices and run tests against the SQuAD Italian dataset structure.
+
+-----
+
+## 🛠 Troubleshooting
+
+  * **Connection Refused**: If you see `ERR_CONNECTION_REFUSED`, check that `config.json` hosts are set correctly ("0.0.0.0" for Docker) and that ports 3000/5005 are mapped correctly.
+  * **GPU Issues**: Run `test_gpu.py` to verify that your Python environment can see the CUDA device.
+  * **Docker Size**: Ensure you have sufficient disk space (approx. 73GB required).
+
+<!-- end list -->
