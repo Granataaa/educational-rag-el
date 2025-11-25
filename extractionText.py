@@ -89,8 +89,8 @@ def main():
     """
     # Definisci le directory di input e output
     input_dir = "transcription"
-    output_text_dir = "only_text"
-    output_json_dir = "timestamps"
+    output_text_dir = "aa_text"
+    output_json_dir = "bb_time"
 
     # Crea le directory di output se non esistono
     os.makedirs(output_text_dir, exist_ok=True)
