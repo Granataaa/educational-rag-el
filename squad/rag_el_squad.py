@@ -3,7 +3,7 @@ import json
 from sentence_transformers import SentenceTransformer, CrossEncoder
 import requests
 import os
-from openai import OpenAI
+from openai import AzureOpenAI
 from dotenv import load_dotenv
 import numpy as np
 import spacy
@@ -54,10 +54,25 @@ def loading_entity_linking():
 
 # Caricamento delle chiavi API e configurazione LLM (invariato)
 load_dotenv()
-key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(organization=os.getenv("ORGANIZATION"), project=os.getenv("PROJECT"))
-url = os.getenv("URL")
-headers = {"Content-Type": "application/json", "Authorization": f"Bearer {key}"}
+load_dotenv()
+api_key=os.getenv("AZURE_OPENAI_KEY")
+api_version = "2025-01-01-preview"
+azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+model_name = os.getenv("CHAT_COMPLETION_NAME")
+
+client = AzureOpenAI(
+    azure_endpoint=azure_endpoint,
+    api_key=api_key,
+    api_version=api_version
+)
+
+url = f"{azure_endpoint}openai/deployments/{model_name}/chat/completions?api-version={api_version}"
+
+
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
+}
 
 
 # --- 2. FUNZIONI HELPER (LLM, LINKING, ETC.) ---

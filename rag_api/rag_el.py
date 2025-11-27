@@ -3,7 +3,7 @@ import json
 from sentence_transformers import SentenceTransformer, CrossEncoder
 import requests
 import os
-from openai import OpenAI
+from openai import AzureOpenAI
 from dotenv import load_dotenv
 import numpy as np
 import spacy
@@ -53,18 +53,23 @@ def loading_entity_linking():
         print("Caricamento già effettuato.")
 
 load_dotenv()
-key = os.getenv("OPENAI_API_KEY")
+api_key=os.getenv("AZURE_OPENAI_KEY")
+api_version = "2025-01-01-preview"
+azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+model_name = os.getenv("CHAT_COMPLETION_NAME")
 
-client = OpenAI(
-  organization=os.getenv("ORGANIZATION"),
-  project=os.getenv("PROJECT"),
+client = AzureOpenAI(
+    azure_endpoint=azure_endpoint,
+    api_key=api_key,
+    api_version=api_version
 )
 
-url = os.getenv("URL")
+url = f"{azure_endpoint}openai/deployments/{model_name}/chat/completions?api-version={api_version}"
+
 
 headers = {
     "Content-Type": "application/json",
-    "Authorization": f"Bearer {key}"
+    "Authorization": f"Bearer {api_key}"
 }
 
 
@@ -123,9 +128,22 @@ def normalize(vecs):
     return vecs / np.linalg.norm(vecs, axis=1, keepdims=True)
 
 def AIRequest(mess):
+    try:
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=mess,
+            #temperature=0
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print("Errore chiamando AzureOpenAI client:", e)
+        return ""
+
+def AIRequest_old(mess):
 
     payload = {
-        "model": "gpt-4o",
+        #"model": "gp4-0",
+        "model": model_name,
         "messages": mess,
         # "max_completion_tokens": 3000,
         "temperature": 0
@@ -537,7 +555,7 @@ def query_rag(query, k_ric, LLMHelp):
 
 # --- ESEMPIO DI ESECUZIONE ---
 if __name__ == '__main__':
-    loading_entity_linking()
+    loading_entity_linking()  
     
     # Esempio di query
     mia_query = "Quali condizioni hanno portato Roger Sperry a ricevere il premio Nobel?"
