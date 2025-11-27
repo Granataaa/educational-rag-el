@@ -54,4 +54,4 @@ chunks_metadata/
 onlyTextLessonsTurbo/
 timestamp_json_turbo/
 transcription/
-docker-compose.yml
+#docker-compose.yml

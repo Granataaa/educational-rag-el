@@ -41,10 +41,10 @@ def loading_entity_linking():
         nlp = spacy.load("it_core_news_lg")
 
         # Carica l'indice Faiss (costruito sugli embedding del testo puro)
-        index = faiss.read_index("../faiss_index300.index") 
+        index = faiss.read_index("faiss_index300.index") 
 
         # Carica il NUOVO file JSON con le entità già linkate
-        with open("../chunks_scripts/chunks_metadata/chunks_linked_entities_emb_final_noemb.json", "r", encoding="utf-8") as f:
+        with open("chunks_scripts/chunks_metadata/chunks_linked_entities_emb_final_noemb.json", "r", encoding="utf-8") as f:
             chunk_data_linked = json.load(f)
         
         print("Caricamento completato.")

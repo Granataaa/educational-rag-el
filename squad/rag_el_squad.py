@@ -54,7 +54,6 @@ def loading_entity_linking():
 
 # Caricamento delle chiavi API e configurazione LLM (invariato)
 load_dotenv()
-load_dotenv()
 api_key=os.getenv("AZURE_OPENAI_KEY")
 api_version = "2025-01-01-preview"
 azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
@@ -67,12 +66,6 @@ client = AzureOpenAI(
 )
 
 url = f"{azure_endpoint}openai/deployments/{model_name}/chat/completions?api-version={api_version}"
-
-
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {api_key}"
-}
 
 
 # --- 2. FUNZIONI HELPER (LLM, LINKING, ETC.) ---
@@ -128,7 +121,7 @@ def cosine_similarity(vec1, vec2):
     
 # Funzioni per l'LLM e la formattazione (invariate)
 def AIRequest(mess):
-    payload = {"model": "gpt-4o", "messages": mess, "max_tokens": 3000, "temperature": 0.0}
+    payload = {"model": model_name, "messages": mess, "max_tokens": 3000, "temperature": 0.0}
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 200:
         return response.json()['choices'][0]['message']['content']

@@ -185,7 +185,7 @@ if __name__ == "__main__":
         benchmark = json.load(f)
 
     print("[DEBUG] loading the chunks metadata...")
-    with open("../chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
+    with open("chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
         chunks_metadata = json.load(f)
 
     #sistema_query(benchmark, chunks_metadata)

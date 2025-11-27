@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  backend_flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python rag_api/server.py
+    ports:
+      - "0.0.0.0:5005:5005"
+    environment:
+      AZURE_OPENAI_KEY: ${AZURE_OPENAI_KEY}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
+      CHAT_COMPLETION_NAME: ${CHAT_COMPLETION_NAME}
+    volumes:
+      - ./reactApi/react-client/public/video:/app/reactApi/react-client/public/video:ro
+      - ./config.json:/app/config.json:ro
+      - ./chunks_scripts:/app/chunks_scripts:ro 
+
+  backend_fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python rag_api/main.py
+    ports:
+      - "0.0.0.0:5006:5006"
+    environment:
+      AZURE_OPENAI_KEY: ${AZURE_OPENAI_KEY}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
+      CHAT_COMPLETION_NAME: ${CHAT_COMPLETION_NAME}
+    volumes:
+      - ./reactApi/react-client/public/video:/app/reactApi/react-client/public/video:ro
+      - ./config.json:/app/config.json:ro
+      - ./faiss_index300.index:/app/faiss_index300.index:ro
+      - ./chunks_scripts:/app/chunks_scripts:ro  
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm start
+    ports:
+      - "0.0.0.0:3000:3000"
+    working_dir: /app/reactApi/react-client
+    depends_on:
+      - backend_flask
+      - backend_fastapi
+    volumes:
+      - ./reactApi/react-client/public/video:/app/reactApi/react-client/public/video:ro
+      - ./reactApi/react-client/public/config.json:/app/reactApi/react-client/public/config.json:ro

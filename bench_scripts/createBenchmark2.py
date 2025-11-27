@@ -143,7 +143,7 @@ if __name__ == "__main__":
     selected_files = files[1::2]  # Prende un file sì e uno no
     print(f"[DEBUG] Selected files: {selected_files}, length: {len(selected_files)}")
 
-    with open("../chunks_scripts/chunks_metadata/chunks_linked_entities_emb_final_noemb.json", "r", encoding="utf-8") as f:
+    with open("chunks_scripts/chunks_metadata/chunks_linked_entities_emb_final_noemb.json", "r", encoding="utf-8") as f:
             chunks = json.load(f)
     print(f"[DEBUG] Loaded chunks metadata")  # Print first 3 chunks
 

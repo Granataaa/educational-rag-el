@@ -16,8 +16,8 @@ def loading_spacy():
     global primaVolta, index, chunk_data, chunk_data_emb, model, nlp
     if primaVolta:
         # Carica tutto
-        index = faiss.read_index("../faiss_index300.index")
-        with open("../chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
+        index = faiss.read_index("faiss_index300.index")
+        with open("chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
             chunk_data = json.load(f)
 
         model = SentenceTransformer('intfloat/multilingual-e5-large')
