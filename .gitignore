@@ -54,7 +54,4 @@ chunks_metadata/
 onlyTextLessonsTurbo/
 timestamp_json_turbo/
 transcription/
-#docker-compose.yml
-
-setup_portproxy.txt
-*.mp4
+docker-compose.yml

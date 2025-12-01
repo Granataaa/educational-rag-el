@@ -1,7 +1,7 @@
 import requests
 import json
 
-with open('config.json', 'r') as f:
+with open('../config.json', 'r') as f:
     config = json.load(f)
 
 BASE_URL = f"http://{config['server']['host']}:{config['server']['port']}"
