@@ -5,10 +5,10 @@ from rag_ner_spacy import loading_spacy
 from rag_el import loading_entity_linking
 import json
 
-with open('../config.json', 'r') as f:
+with open('config.json', 'r') as f:
     config = json.load(f)
 
-host = config['server']['host']
+host = "0.0.0.0"
 port = config['server']['port']
 
 # Crea l'app Connexion
