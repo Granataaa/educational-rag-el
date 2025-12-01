@@ -8,7 +8,7 @@ import json
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-host = config['server']['host']
+host = "0.0.0.0"
 port = config['server']['port']
 
 # Crea l'app Connexion

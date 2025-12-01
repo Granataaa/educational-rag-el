@@ -20,7 +20,7 @@ CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 try:
     with open(CONFIG_PATH, 'r') as f:
         config = json.load(f)
-        HOST = config['server']['host']
+        HOST = "0.0.0.0"
         # Use 5006 for FastAPI to allow running side-by-side with Flask (5005)
         PORT = 5006 
 except Exception as e:
@@ -35,7 +35,10 @@ async def lifespan(app: FastAPI):
     """
     # Startup: Load RAG models
     print("Starting up... Loading RAG models.")
-    rag_el.loading_entity_linking()
+    try:
+        rag_el.loading_entity_linking()
+    except Exception as e:
+        print(f"CRITICAL ERROR loading RAG models: {e}")
     yield
     # Shutdown: Clean up resources if needed
     print("Shutting down...")
@@ -55,6 +58,10 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+@app.get("/", summary="Health Check")
+async def root():
+    return {"status": "ok", "service": "UniNettuno RAG API", "docs": "/docs"}
 
 @app.get("/ask", response_model=RagResponse, summary="Ask a query to the RAG system")
 async def ask(

@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python rag_api/main.py
+    command: uvicorn rag_api.main:app --host 0.0.0.0 --port 5006
     ports:
       - "0.0.0.0:5006:5006"
     environment:
@@ -41,6 +41,8 @@ services:
     ports:
       - "0.0.0.0:3000:3000"
     working_dir: /app/reactApi/react-client
+    environment:
+      - HOST=0.0.0.0
     depends_on:
       - backend_flask
       - backend_fastapi
