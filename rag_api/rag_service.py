@@ -3,7 +3,7 @@ import json
 from sentence_transformers import SentenceTransformer
 import requests
 import os
-from openai import AzureOpenAI
+from openai import OpenAI
 from dotenv import load_dotenv
 import numpy as np
 import json
@@ -15,8 +15,8 @@ def loading():
     global primaVolta, index, chunk_data, model
     if primaVolta:
         # Carica tutto
-        index = faiss.read_index("faiss_index300.index")
-        with open("chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
+        index = faiss.read_index("../faiss_index300.index")
+        with open("../chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
             chunk_data = json.load(f)
 
         model = SentenceTransformer('intfloat/multilingual-e5-large')
@@ -26,44 +26,27 @@ def loading():
         print("Caricamento già effettuato.")
 
 load_dotenv()
-api_key=os.getenv("AZURE_OPENAI_KEY")
-api_version = "2025-01-01-preview"
-azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-model_name = os.getenv("CHAT_COMPLETION_NAME")
+key = os.getenv("OPENAI_API_KEY")
 
-client = AzureOpenAI(
-    azure_endpoint=azure_endpoint,
-    api_key=api_key,
-    api_version=api_version
+client = OpenAI(
+  organization=os.getenv("ORGANIZATION"),
+  project=os.getenv("PROJECT"),
 )
 
-url = f"{azure_endpoint}openai/deployments/{model_name}/chat/completions?api-version={api_version}"
-
+url = os.getenv("URL")
 
 headers = {
     "Content-Type": "application/json",
-    "Authorization": f"Bearer {api_key}"
+    "Authorization": f"Bearer {key}"
 }
 
 def normalize(vecs):
     return vecs / np.linalg.norm(vecs, axis=1, keepdims=True)
 
 def AIRequest(mess):
-    try:
-        response = client.chat.completions.create(
-            model=model_name,
-            messages=mess,
-            #temperature=0
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print("Errore chiamando AzureOpenAI client:", e)
-        return ""
-
-def AIRequest_old(mess):
 
     payload = {
-        "model": model_name,
+        "model": "gpt-4o",
         "messages": mess,
         "max_tokens": 3000,
         "temperature": 0.0

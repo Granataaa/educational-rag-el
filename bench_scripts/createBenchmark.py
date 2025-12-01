@@ -1,4 +1,4 @@
-from openai import AzureOpenAI
+from openai import OpenAI
 from dotenv import load_dotenv
 import requests
 import os
@@ -8,45 +8,29 @@ import time
 
 print("[DEBUG] Loading environment variables...")
 load_dotenv()
-api_key=os.getenv("AZURE_OPENAI_KEY")
-api_version = "2025-01-01-preview"
-azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-model_name = os.getenv("CHAT_COMPLETION_NAME")
+key = os.getenv("OPENAI_API_KEY")
 
-client = AzureOpenAI(
-    azure_endpoint=azure_endpoint,
-    api_key=api_key,
-    api_version=api_version
+client = OpenAI(
+    organization=os.getenv("ORGANIZATION"),
+    project=os.getenv("PROJECT"),
 )
 
-url = f"{azure_endpoint}openai/deployments/{model_name}/chat/completions?api-version={api_version}"
-
+url = os.getenv("URL")
+print(f"[DEBUG] URL: {url}")
 
 headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {api_key}"
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {key}"
 }
 
 def normalize(vecs):
         result = vecs / np.linalg.norm(vecs, axis=1, keepdims=True)
         return result
-        
-def AIRequest(mess):
-    try:
-        response = client.chat.completions.create(
-            model=model_name,
-            messages=mess,
-            #temperature=0
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print("Errore chiamando AzureOpenAI client:", e)
-        return ""
 
-def AIRequest_old(mess):
+def AIRequest(mess):
 
     payload = {
-            "model": model_name,
+            "model": "gpt-4o",
             "messages": mess,
             "temperature": 1.0
     }
@@ -146,7 +130,7 @@ if __name__ == "__main__":
         selected_files = files[::2]  # Prende un file sì e uno no
         print(f"[DEBUG] Selected files: {selected_files}, length: {len(selected_files)}")
 
-        with open("chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
+        with open("../chunks_scripts/chunks_metadata/chunks_metadata300.json", "r", encoding="utf-8") as f:
                 chunks = json.load(f)
         print(f"[DEBUG] Loaded chunks metadata")  # Print first 3 chunks
 
