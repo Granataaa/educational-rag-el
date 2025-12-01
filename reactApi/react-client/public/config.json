@@ -1,6 +1,7 @@
 {
   "server": {
-    "host": "localhost",
-    "port": 5005
+    "host": "10.10.11.141",
+    "port": 5005,
+    "port_fastapi": 5006
   }
 }

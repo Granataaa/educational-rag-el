@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+sentence-transformers
+spacy
+faiss-cpu
+requests
+openai
+azure-identity

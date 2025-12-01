@@ -1,6 +1,6 @@
 from rag_service import loading, query_rag
 from rag_el import loading_entity_linking, query_entity_linking_rerank, query_entity_linking_rerank_RRF, query_rag_with_cross_encoder
-from openai import OpenAI
+from openai import AzureOpenAI
 import json
 import os
 from dotenv import load_dotenv
@@ -14,19 +14,23 @@ from tqdm import tqdm
 loading_entity_linking()
 
 load_dotenv()
-key = os.getenv("OPENAI_API_KEY")
+api_key=os.getenv("AZURE_OPENAI_KEY")
+api_version = "2025-01-01-preview"
+azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+model_name = os.getenv("CHAT_COMPLETION_NAME")
 
-client = OpenAI(
-    organization=os.getenv("ORGANIZATION"),
-    project=os.getenv("PROJECT"),
+client = AzureOpenAI(
+    azure_endpoint=azure_endpoint,
+    api_key=api_key,
+    api_version=api_version
 )
 
-url = os.getenv("URL")
-# print(f"[DEBUG] URL: {url}")
+url = f"{azure_endpoint}openai/deployments/{model_name}/chat/completions?api-version={api_version}"
+
 
 headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {key}"
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
 }
 
 def normalize(vecs):
@@ -34,9 +38,21 @@ def normalize(vecs):
         return result
 
 def AIRequest(mess):
+    try:
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=mess,
+            #temperature=0
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print("Errore chiamando AzureOpenAI client:", e)
+        return ""
+
+def AIRequest_old(mess):
 
     payload = {
-            "model": "gpt-4o",
+            "model": model_name,
             "messages": mess,
             "temperature": 0.0
     }
